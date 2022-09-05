@@ -7,10 +7,9 @@ RUN apt-get update -y
 # RUN apt-get install neofetch -y
 
 # Works, but without Gstreamer
-RUN pip install opencv-python==4.5.5.64
-# RUN apt-get install ffmpeg libsm6 libxext6 -y
+RUN apt-get install ffmpeg libsm6 libxext6 -y
 RUN apt-get install -y libsm6 libxext6 libxrender-dev
-
+RUN pip install opencv-python==4.5.5.64
 # Broken, probably
 # RUN apt-get install gstreamer1.0* -y
 

@@ -19,7 +19,7 @@ model = torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn(
 model.to(device)
 # Model to evaluation mode
 model.eval()
-# print(model)
+print(model)
 
 # Prep the image for feeding into the network
 transform = transforms.ToTensor()
