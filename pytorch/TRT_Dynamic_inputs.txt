@@ -1,0 +1,5 @@
+https://forums.developer.nvidia.com/t/dynamic-onnx-model-becomes-a-trt-engine-with-a-static-output/218128
+https://forums.developer.nvidia.com/t/trt-polygraphy-change-a-dynamic-tensor-output-to-static-output/217846
+https://catalog.ngc.nvidia.com/orgs/nvidia/containers/deepstream-l4t
+https://github.com/NVIDIA-AI-IOT/deepstream_python_apps/blob/master/apps/deepstream-ssd-parser/deepstream_ssd_parser.py
+https://forums.developer.nvidia.com/t/faster-rcnn-and-variable-input-size/110881
