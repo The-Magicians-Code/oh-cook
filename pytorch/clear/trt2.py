@@ -73,34 +73,24 @@ class TrtModel:
         return [out.host.reshape(batch_size, -1) for out in self.outputs]
 
 # Helper function to benchmark the model
-def benchmark(model, input_shape=(1024, 1, 32, 32), dtype='fp32', nwarmup=50, nruns=1000):
-    input_data = torch.randn(input_shape)
-    input_data = input_data.to("cuda")
-    if dtype=='fp16':
-        input_data = input_data.half()
-
-    print("Warm up ...")
+def benchmark(model, data, nwarmup=100, nruns=1000):
     with torch.no_grad():
-        for _ in range(nwarmup):
-            features = model(input_data)
-    torch.cuda.synchronize()
-    print("Start timing ...")
+        for i in range(1, nwarmup + 1):
+            pred_loc, pred_label = model(data, batch_size)
+            torch.cuda.synchronize()
+    
     timings = []
     with torch.no_grad():
-        for i in range(1, nruns+1):
+        for i in range(1, nruns + 1):
             start_time = time.time()
-            pred_loc, pred_label = model(input_data)
+            pred_loc, pred_label = model(data, batch_size)
             torch.cuda.synchronize()
             end_time = time.time()
             timings.append(end_time - start_time)
-            if i%10==0:
-                print('Iteration %d/%d, avg batch time %.2f ms'%(i, nruns, np.mean(timings)*1000))
+            # if i%10==0:
+            #     print('Iteration %d/%d, avg batch time %.2f ms'%(i, 1000, np.mean(timings)*1000))
+    print('Iteration %d/%d, avg. batch time %.2f ms, %d FPS' % (i, 1000, np.mean(timings)*1000, 1 / np.mean(timings)))
 
-    print("Input shape:", input_data.size())
-    print("Output location prediction size:", pred_loc.size())
-    print("Output label prediction size:", pred_label.size())
-    print('Average batch time: %.2f ms'%(np.mean(timings)*1000))
-    print('Average FPS: %0.0f'%(1.0 / np.mean(timings)))
 
 if __name__ == "__main__":
     trt_engine_path = os.path.join("ssd_engine.trt")
@@ -111,20 +101,4 @@ if __name__ == "__main__":
     data = np.random.randint(0,255,(batch_size,*shape[1:]))/255
     result = model(data, batch_size)
     print(result)
-
-    with torch.no_grad():
-        for i in range(1, 100+1):
-            pred_loc, pred_label = model(data, batch_size)
-            torch.cuda.synchronize()
-    
-    timings = []
-    with torch.no_grad():
-        for i in range(1, 1000+1):
-            start_time = time.time()
-            pred_loc, pred_label = model(data, batch_size)
-            torch.cuda.synchronize()
-            end_time = time.time()
-            timings.append(end_time - start_time)
-            # if i%10==0:
-            #     print('Iteration %d/%d, avg batch time %.2f ms'%(i, 1000, np.mean(timings)*1000))
-    print('Iteration %d/%d, avg. batch time %.2f ms, %d FPS' % (i, 1000, np.mean(timings)*1000, 1 / np.mean(timings)))
+    benchmark(model, data)
