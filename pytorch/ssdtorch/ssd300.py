@@ -1,5 +1,5 @@
 import torch
-torch.hub._validate_not_a_forked_repo=lambda a,b,c: True
+torch.hub._validate_not_a_forked_repo=lambda a, b, c: True
 
 # List of available models in PyTorch Hub from Nvidia/DeepLearningExamples
 torch.hub.list('NVIDIA/DeepLearningExamples:torchhub')
@@ -36,8 +36,6 @@ detections_batch = model(tensor)
 results_per_input = utils.decode_results(detections_batch)
 best_results_per_input = [utils.pick_best(results, 0.40) for results in results_per_input]
 
-
-
 from matplotlib import pyplot as plt
 import matplotlib.patches as patches
 
@@ -61,8 +59,6 @@ def plot_results(best_results):
     
 # Visualize results without Torch-TensorRT
 plot_results(best_results_per_input)
-
-
 
 import time
 import numpy as np
@@ -103,16 +99,12 @@ def benchmark(model, input_shape=(1024, 1, 32, 32), dtype='fp32', nwarmup=50, nr
 model = ssd300.eval().to("cuda")
 benchmark(model, input_shape=(128, 3, 300, 300), nruns=100)
 
-
-
 model = ssd300.eval().to("cuda")
-traced_model = torch.jit.trace(model, [torch.randn((1,3,300,300)).to("cuda")])
+traced_model = torch.jit.trace(model, [torch.randn((1, 3, 300, 300)).to("cuda")])
 # This is just an example, and not required for the purposes of this demo
 torch.jit.save(traced_model, "ssd_300_traced.jit.pt")
 # Obtain the average time taken by a batch of input with Torchscript compiled modules
 benchmark(traced_model, input_shape=(128, 3, 300, 300), nruns=100)
-
-
 
 import torch_tensorrt
 
@@ -124,8 +116,6 @@ trt_model = torch_tensorrt.compile(traced_model,
     workspace_size= 1 << 20
 )
 
-
-
 # using a Torch-TensorRT module is exactly the same as how we usually do inference in PyTorch i.e. model(inputs)
 detections_batch = trt_model(tensor.to(torch.half)) # convert the input to half precision
 
@@ -135,12 +125,8 @@ detections_batch = trt_model(tensor.to(torch.half)) # convert the input to half 
 results_per_input = utils.decode_results(detections_batch)
 best_results_per_input_trt = [utils.pick_best(results, 0.40) for results in results_per_input]
 
-
-
 # Visualize results with Torch-TensorRT
 plot_results(best_results_per_input_trt)
-
-
 
 batch_size = 128
 
