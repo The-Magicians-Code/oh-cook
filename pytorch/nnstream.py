@@ -23,7 +23,7 @@ transform = transforms.ToTensor()
 
 cap = cv2.VideoCapture("video.mp4")
 
-ret, frame = cap.read()
+# ret, frame = cap.read()
 
 # height, width = 720, 1280# frame.shape[:2]
 

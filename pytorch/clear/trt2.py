@@ -96,9 +96,10 @@ if __name__ == "__main__":
     trt_engine_path = os.path.join("ssd_engine.trt")
     model = TrtModel(trt_engine_path)
     shape = model.engine.get_binding_shape(0)
-    print(shape)
+    # print(shape)
     batch_size = shape[0]
     data = np.random.randint(0,255,(batch_size,*shape[1:]))/255
+    # print(data.shape)
     result = model(data, batch_size)
-    print(result)
+    print(f"Locations: {result[0].shape} -> (1, 4, 60572)\nLabels: {result[1].shape} -> (1, 81, 60572)")
     benchmark(model, data)

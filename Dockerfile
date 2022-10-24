@@ -41,6 +41,5 @@ RUN pip install scikit-image pycuda
 # RUN make install
 # RUN ldconfig
 
-WORKDIR /workspace
-# COPY /pytorch /workspace/torching
+WORKDIR /workspace/torching
 EXPOSE 3000
