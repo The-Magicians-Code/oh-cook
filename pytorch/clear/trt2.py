@@ -5,6 +5,7 @@ import pycuda.driver as cuda
 import pycuda.autoinit
 import torch
 import time
+import cv2
 
 class HostDeviceMem(object):
     def __init__(self, host_mem, device_mem):
@@ -93,13 +94,24 @@ def benchmark(model, data, nwarmup=100, nruns=1000):
 
 
 if __name__ == "__main__":
+    utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
+
     trt_engine_path = os.path.join("ssd_engine.trt")
-    model = TrtModel(trt_engine_path)
+    model = TrtModel(trt_engine_path, dtype=np.float16)
     shape = model.engine.get_binding_shape(0)
     # print(shape)
     batch_size = shape[0]
     data = np.random.randint(0,255,(batch_size,*shape[1:]))/255
+    pic = cv2.imread("ship2.jpeg")
+    size = shape[2:]
+    img = cv2.resize(pic, size)
+
     # print(data.shape)
-    result = model(data, batch_size)
+    result = model(img, batch_size)
     print(f"Locations: {result[0].shape} -> (1, 4, 60572)\nLabels: {result[1].shape} -> (1, 81, 60572)")
-    benchmark(model, data)
+    label, location = [torch.from_numpy(i) for i in result]
+    # label = torch.reshape(label, (1, 4, 60572))
+    # location = torch.reshape(location, (1, 81, 60572))
+    print(label.shape, location.shape)
+    results_per_input = utils.decode_results([label, location])
+    # benchmark(model, data)

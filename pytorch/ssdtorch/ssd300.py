@@ -111,9 +111,9 @@ import torch_tensorrt
 # The compiled module will have precision as specified by "op_precision".
 # Here, it will have FP16 precision.
 trt_model = torch_tensorrt.compile(traced_model,
-    inputs= [torch_tensorrt.Input((3, 3, 300, 300), dtype=torch.half)],
-    enabled_precisions= {torch.half}, # Run with FP16
-    workspace_size= 1 << 20
+    inputs = [torch_tensorrt.Input((3, 3, 300, 300), dtype=torch.half)],
+    enabled_precisions = {torch.half}, # Run with FP16
+    workspace_size = 1 << 20
 )
 
 # using a Torch-TensorRT module is exactly the same as how we usually do inference in PyTorch i.e. model(inputs)
@@ -133,8 +133,8 @@ batch_size = 128
 # Recompiling with batch_size we use for evaluating performance
 trt_model = torch_tensorrt.compile(traced_model,
     inputs = [torch_tensorrt.Input((batch_size, 3, 300, 300), dtype=torch.half)],
-    enabled_precisions= {torch.half}, # Run with FP16
-    workspace_size= 1 << 20
+    enabled_precisions = {torch.half}, # Run with FP16
+    workspace_size = 1 << 20
 )
 
 benchmark(trt_model, input_shape=(batch_size, 3, 300, 300), dtype='fp16', nruns=100)

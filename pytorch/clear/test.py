@@ -94,6 +94,7 @@ def benchmark(model, input_shape=(1024, 1, 32, 32), dtype='fp32', nwarmup=50, nr
     print("Output label prediction size:", pred_label.size())
     print('Average batch time: %.2f ms'%(np.mean(timings)*1000))
     print('Average FPS: %0.0f'%(1.0 / np.mean(timings)))
+    print(pred_loc, pred_label)
 ############################Benchmark
 
 # Visualize results without Torch-TensorRT
@@ -101,14 +102,14 @@ def benchmark(model, input_shape=(1024, 1, 32, 32), dtype='fp32', nwarmup=50, nr
 
 # Model benchmark without Torch-TensorRT
 # model = ssd300.eval().to("cuda")
-input_shapes=(1, 3, 800, 800)
-benchmark(model, input_shape=input_shapes, nruns=100)
+input_shapes=(1, 3, 300, 300)
+benchmark(model, input_shape=input_shapes, nruns=1)
 
-# torch.onnx.export(model, torch.randn(input_shapes).to("cuda"), "ssd.onnx")
+torch.onnx.export(model, torch.randn(input_shapes).to("cuda"), "ssd.onnx")
 
-# from subprocess import call
+from subprocess import call
 
-# call(f"trtexec --onnx=ssd.onnx --saveEngine=ssd_engine.trt --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --noTF32 --workspace={1 << 30}".split())
+call(f"trtexec --onnx=ssd.onnx --saveEngine=ssd_engine.trt --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --noTF32 --workspace={1 << 30}".split())
 
 # import pycuda.driver as cuda
 # import pycuda.autoinit
