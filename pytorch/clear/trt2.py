@@ -93,25 +93,32 @@ def benchmark(model, data, nwarmup=100, nruns=1000):
     print('Iteration %d/%d, avg. batch time %.2f ms, %d FPS' % (i, 1000, np.mean(timings)*1000, 1 / np.mean(timings)))
 
 
-if __name__ == "__main__":
-    utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
+# if __name__ == "__main__":
+utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
 
-    trt_engine_path = os.path.join("ssd_engine.trt")
-    model = TrtModel(trt_engine_path, dtype=np.float16)
-    shape = model.engine.get_binding_shape(0)
-    # print(shape)
-    batch_size = shape[0]
-    data = np.random.randint(0,255,(batch_size,*shape[1:]))/255
-    pic = cv2.imread("ship2.jpeg")
-    size = shape[2:]
-    img = cv2.resize(pic, size)
+trt_engine_path = os.path.join("ssd_engine2.trt")
+model = TrtModel(trt_engine_path, dtype=np.float16)
+shape = model.engine.get_binding_shape(0)
+# print(shape)
+batch_size = shape[0]
+data = np.random.randint(0,255,(batch_size,*shape[1:]))/255
+pic = cv2.imread("ship2.jpeg")
+size = shape[2:]
+img = cv2.resize(pic, size)
 
-    # print(data.shape)
-    result = model(img, batch_size)
-    print(f"Locations: {result[0].shape} -> (1, 4, 60572)\nLabels: {result[1].shape} -> (1, 81, 60572)")
-    label, location = [torch.from_numpy(i) for i in result]
-    # label = torch.reshape(label, (1, 4, 60572))
-    # location = torch.reshape(location, (1, 81, 60572))
-    print(label.shape, location.shape)
-    results_per_input = utils.decode_results([label, location])
-    # benchmark(model, data)
+loc, label = model(img, batch_size)
+print(loc.shape, label.shape)
+
+# Possible solution:
+# loc.reshape((1, 4, 8732))
+# label.reshape((1, 81, 8732))
+
+# print(data.shape)
+# result = model(img, batch_size)
+# print(f"Locations: {result[0].shape} -> (1, 4, 60572)\nLabels: {result[1].shape} -> (1, 81, 60572)")
+# label, location = [torch.from_numpy(i) for i in result]
+# # label = torch.reshape(label, (1, 4, 60572))
+# # location = torch.reshape(location, (1, 81, 60572))
+# print(label.shape, location.shape)
+# results_per_input = utils.decode_results([label, location])
+# # benchmark(model, data)
