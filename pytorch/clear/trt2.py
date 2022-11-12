@@ -101,7 +101,7 @@ model = TrtModel(trt_engine_path, dtype=np.float16)
 shape = model.engine.get_binding_shape(0)
 # print(shape)
 batch_size = shape[0]
-data = np.random.randint(0,255,(batch_size,*shape[1:]))/255
+# data = np.random.randint(0,255,(batch_size,*shape[1:]))/255
 pic = cv2.imread("ship2.jpeg")
 pic = pic[...,::-1]
 

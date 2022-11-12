@@ -145,17 +145,19 @@ def gen_frames():
                 
                 # Prepare image for neural network
                 size = shape[2:]
-                img = np.transpose(cv2.resize(pic, size), (2, 0, 1))
-                print(img.shape)
+                img = cv2.resize(pic, size)
+                # img = np.transpose(cv2.resize(pic, size), (2, 0, 1))
+                # print(img.shape)
 
                 loc, label = model(img, batch_size)
-                loc = torch.Tensor(loc.reshape((1, 4, 8732)))
-                label = torch.Tensor(label.reshape((1, 81, 8732)))
+                # loc = torch.Tensor(loc.reshape((1, 4, 8732)))
+                # label = torch.Tensor(label.reshape((1, 81, 8732)))
 
-                results = utils.decode_results([loc, label])
-                # best_results = [utils.pick_best(result, 0.40) for result in results]
-                print(results)
+                # results = utils.decode_results([loc, label])
+                # print(results)
 
+
+                ############ OTHER BITS ############
                 # # Load predictions to CPU for processing
                 # scores = np.array(prediction["scores"].cpu().detach().numpy())
                 # boxes = np.array(prediction["boxes"].cpu().detach().numpy())
