@@ -133,7 +133,7 @@ def gen_frames():
         while(True):
             #Capture frame-by-frame
             ret, pic = cap.read()
-            
+            # pic = pic[...,::-1] # If interested for some other display like matplotlib
             if not ret:
                 break
             else:

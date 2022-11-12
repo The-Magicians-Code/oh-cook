@@ -103,6 +103,8 @@ shape = model.engine.get_binding_shape(0)
 batch_size = shape[0]
 data = np.random.randint(0,255,(batch_size,*shape[1:]))/255
 pic = cv2.imread("ship2.jpeg")
+pic = pic[...,::-1]
+
 size = shape[2:]
 img = cv2.resize(pic, size)
 
@@ -126,8 +128,8 @@ classes_to_labels = utils.get_coco_object_dictionary()
 
 fig, ax = plt.subplots(1)
 # Show original, denormalized image...
-image = img / 2 + 0.5
-ax.imshow(image)
+# image = img / 2 + 0.5
+ax.imshow(img)
 # ...with detections
 bboxes, classes, confidences = results[0]
 for idx in range(len(bboxes)):
