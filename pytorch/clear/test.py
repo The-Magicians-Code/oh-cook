@@ -27,7 +27,7 @@ uris = [
 # Format images to comply with the network input
 inputs = [utils.prepare_input(uri) for uri in uris]
 tensor = utils.prepare_tensor(inputs, False)
-
+print(inputs)
 # The model was trained on COCO dataset, which we need to access in order to
 # translate class IDs into object names.
 classes_to_labels = utils.get_coco_object_dictionary()
@@ -41,7 +41,6 @@ detections_batch = model(tensor)
 # Let’s filter this output to only get reasonable detections (confidence>40%) in a more comprehensive format.
 results_per_input = utils.decode_results(detections_batch)
 best_results_per_input = [utils.pick_best(results, 0.40) for results in results_per_input]
-
 
 ###########################Visualise
 # The utility plots the images and predicted bounding boxes (with confidence scores).
@@ -103,13 +102,13 @@ def benchmark(model, input_shape=(1024, 1, 32, 32), dtype='fp32', nwarmup=50, nr
 # Model benchmark without Torch-TensorRT
 # model = ssd300.eval().to("cuda")
 input_shapes=(1, 3, 300, 300)
-benchmark(model, input_shape=input_shapes, nruns=1)
+# benchmark(model, input_shape=input_shapes, nruns=1)
 
-torch.onnx.export(model, torch.randn(input_shapes).to("cuda"), "ssd.onnx")
+# torch.onnx.export(model, torch.randn(input_shapes).to("cuda"), "ssd.onnx")
 
-from subprocess import call
+# from subprocess import call
 
-call(f"trtexec --onnx=ssd.onnx --saveEngine=ssd_engine.trt --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --noTF32 --workspace={1 << 30}".split())
+# call(f"trtexec --onnx=ssd.onnx --saveEngine=ssd_engine.trt --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --noTF32 --workspace={1 << 30}".split())
 
 # import pycuda.driver as cuda
 # import pycuda.autoinit

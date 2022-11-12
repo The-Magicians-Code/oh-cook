@@ -97,14 +97,15 @@ class TrtModel:
 # cap = cv2.VideoCapture('filesrc location=video.mp4 ! qtdemux ! queue ! h264parse ! omxh264dec ! nvvidconv ! video/x-raw,format=BGRx,width=1280,height=720 ! queue ! videoconvert ! queue ! video/x-raw, format=BGR ! appsink', cv2.CAP_GSTREAMER)
 # print(int(cap.get(cv2.CAP_PROP_FPS)))
 
-trt_engine_path = os.path.join("ssd_engine.trt")
+trt_engine_path = os.path.join("ssd_engine2.trt")
 model = TrtModel(trt_engine_path)
 
 cap = cv2.VideoCapture("video.mp4")
 
 def gen_frames():
-    transform = transforms.ToTensor()
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    # transform = transforms.ToTensor()
+    # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
 
     height, width = 720, 1280# frame.shape[:2]
 
@@ -143,18 +144,17 @@ def gen_frames():
                 tau = now
                 
                 # Prepare image for neural network
-                # transform = transforms.ToTensor()
                 size = shape[2:]
-                # print(size)
-                # img = transform(cv2.resize(pic, size)).to(device) # Cast to torch.tensor() and send to GPU
-                img = cv2.resize(pic, size)
-                # img = np.moveaxis(img, -1, 0)
-                # print(img.shape)
-                batch = [img]
+                img = np.transpose(cv2.resize(pic, size), (2, 0, 1))
+                print(img.shape)
 
-                prediction = model(img, batch_size=batch_size)
-                # Use the model and visualize the prediction
-                # prediction = model(batch)[0]
+                loc, label = model(img, batch_size)
+                loc = torch.Tensor(loc.reshape((1, 4, 8732)))
+                label = torch.Tensor(label.reshape((1, 81, 8732)))
+
+                results = utils.decode_results([loc, label])
+                # best_results = [utils.pick_best(result, 0.40) for result in results]
+                print(results)
 
                 # # Load predictions to CPU for processing
                 # scores = np.array(prediction["scores"].cpu().detach().numpy())

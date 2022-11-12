@@ -107,18 +107,36 @@ size = shape[2:]
 img = cv2.resize(pic, size)
 
 loc, label = model(img, batch_size)
-print(loc.shape, label.shape)
+# print(loc.shape, label.shape)
 
-# Possible solution:
-# loc.reshape((1, 4, 8732))
-# label.reshape((1, 81, 8732))
+loc = torch.Tensor(loc.reshape((1, 4, 8732)))
+label = torch.Tensor(label.reshape((1, 81, 8732)))
+print(f"loc:\n{loc}\nlabel:\n{label}")
+print(f"loc.shape:\n{loc.shape}\nlabel.shape:\n{label.shape}")
+results = utils.decode_results([loc, label])
+print(results)
 
-# print(data.shape)
-# result = model(img, batch_size)
-# print(f"Locations: {result[0].shape} -> (1, 4, 60572)\nLabels: {result[1].shape} -> (1, 81, 60572)")
-# label, location = [torch.from_numpy(i) for i in result]
-# # label = torch.reshape(label, (1, 4, 60572))
-# # location = torch.reshape(location, (1, 81, 60572))
-# print(label.shape, location.shape)
-# results_per_input = utils.decode_results([label, location])
-# # benchmark(model, data)
+loca, id, conf = results[0]
+
+from matplotlib import pyplot as plt
+import matplotlib.patches as patches
+
+detected = "ship_found"
+classes_to_labels = utils.get_coco_object_dictionary()
+
+fig, ax = plt.subplots(1)
+# Show original, denormalized image...
+image = img / 2 + 0.5
+ax.imshow(image)
+# ...with detections
+bboxes, classes, confidences = results[0]
+for idx in range(len(bboxes)):
+    left, bot, right, top = bboxes[idx]
+    x, y, w, h = [val * size[0] for val in [left, bot, right - left, top - bot]]
+    rect = patches.Rectangle((x, y), w, h, linewidth=1, edgecolor='r', facecolor='none')
+    ax.add_patch(rect)
+    ax.text(x, y, "{} {:.0f}%".format(classes_to_labels[classes[idx] - 1], confidences[idx]*100), bbox=dict(facecolor='white', alpha=0.5))
+# plt.show()
+plt.savefig(f"results/f{detected}.png")
+
+# benchmark(model, data)
