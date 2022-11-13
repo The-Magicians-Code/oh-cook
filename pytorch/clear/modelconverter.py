@@ -66,9 +66,9 @@ model_trt = "ssd_engine2.trt"
 # benchmark(model, input_shape=input_shapes, nruns=50)
 # print(model)
 if onnx:
-    output = torch.randn(input_shapes, requires_grad=True, device="cuda")
+    input = torch.randn(input_shapes, requires_grad=True, device="cuda")
     print("Exporting model to onnx format")
-    torch.onnx.export(model, output, model_onnx)
+    torch.onnx.export(model, input, model_onnx)
 
 if tensorrt:
     call(f"trtexec --onnx={model_onnx} --saveEngine={model_trt} --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --workspace={1 << 30} --verbose".split())
