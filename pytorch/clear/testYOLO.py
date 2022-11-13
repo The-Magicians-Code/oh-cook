@@ -12,8 +12,8 @@ model = torch.hub.load('ultralytics/yolov5', 'yolov5s', pretrained=True)
 cap = cv2.VideoCapture("video.mp4")
 
 def gen_frames():
-    frame = cap.read()
-    height, width = frame[1].shape[:2]
+    ret, frame = cap.read()
+    height, width = frame.shape[:2]
 
     fps = 0
     tau = time.time()
@@ -28,7 +28,7 @@ def gen_frames():
     fontthick = 1
 
     with torch.no_grad():
-        while(True):
+        while(ret):
             #Capture frame-by-frame
             ret, pic = cap.read()
             
