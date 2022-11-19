@@ -6,10 +6,11 @@ from flask import Flask, render_template, Response
 
 app = Flask(__name__)
 
-model = torch.hub.load('ultralytics/yolov5', 'yolov5s6', pretrained=True)
-# model.eval().to("cuda")
+# model = torch.hub.load('ultralytics/yolov5', 'yolov5s6', pretrained=True)
+model = torch.hub.load("ultralytics/yolov5", "custom", "yolov5s6_engine2.engine") # This line is important since it contains RT execution
+model.eval().to("cuda")
 
-cap = cv2.VideoCapture("video.mp4")
+cap = cv2.VideoCapture("../video.mp4")
 
 def gen_frames():
     ret, frame = cap.read()
@@ -40,7 +41,8 @@ def gen_frames():
                 if now > tau:  # avoid div0
                     fps = fps*smoothing + 0.1/(now - tau)
                 tau = now
-
+                
+                pic = cv2.resize(pic, (1280, 1280))
                 results = model(pic, size=1280)
                 detections = results.pandas().xyxy[0]
 
@@ -89,4 +91,4 @@ def index():
     return render_template('index.html')
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=3000)
+    app.run(host='0.0.0.0', port=3001)

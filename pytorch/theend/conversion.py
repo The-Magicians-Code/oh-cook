@@ -49,6 +49,9 @@ onnx = False
 tensorrt = True
 
 if onnx:
+    model = torch.hub.load('ultralytics/yolov5', 'yolov5s6', pretrained=True)
+    input_shapes = (1, 3, 1280, 1280)
+
     input = torch.randn(input_shapes, requires_grad=True, device="cuda")
     print("Exporting model to onnx format")
     torch.onnx.export(model, input, f"{model_onnx}.onnx", opset_version=12)
