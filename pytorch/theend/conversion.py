@@ -58,4 +58,4 @@ if onnx:
 
 if tensorrt:
     from subprocess import call
-    call(f"trtexec --onnx={model_onnx}.onnx --saveEngine={model_trt}.trt --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --noTF32 --workspace={1 << 30}".split()) # --verbose optional
+    call(f"trtexec --onnx={model_onnx}.onnx --saveEngine={model_trt}.engine --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --noTF32 --workspace={1 << 30}".split()) # --verbose optional
