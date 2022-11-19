@@ -10,6 +10,7 @@ app = Flask(__name__)
 model = torch.hub.load("ultralytics/yolov5", "custom", "yolov5s6_engine2.engine") # This line is important since it contains RT execution
 model.eval().to("cuda")
 
+# cap = cv2.VideoCapture('filesrc location=video.mp4 ! qtdemux ! queue ! h264parse ! omxh264dec ! nvvidconv ! video/x-raw,format=BGRx,width=1280,height=720 ! queue ! videoconvert ! queue ! video/x-raw, format=BGR ! appsink', cv2.CAP_GSTREAMER)
 cap = cv2.VideoCapture("../video.mp4")
 
 def gen_frames():
@@ -92,3 +93,4 @@ def index():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3001)
+    # app.run(host='0.0.0.0', port=3030)
