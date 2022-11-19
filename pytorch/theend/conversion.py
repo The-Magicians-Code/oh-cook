@@ -42,8 +42,8 @@ def show(results, pic):
 
 # show(detect, img)
 # print(detect)
-model_onnx = "yolov5s6"
-model_trt = "yolov5s6_engine"
+model_onnx = "yolov5l6"
+model_trt = "yolov5l6_engine"
 
 onnx = False
 tensorrt = True
