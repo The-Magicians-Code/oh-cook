@@ -90,7 +90,3 @@ def index():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3000)
-    
-# When everything done, pack your shite and move on
-cap.release()
-cv2.destroyAllWindows()

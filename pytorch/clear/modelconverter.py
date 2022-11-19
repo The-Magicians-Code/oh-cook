@@ -60,9 +60,10 @@ print(f"loc:\n{pred_loc}\nlabel:\n{pred_label}")
 print(f"loc.shape:\n{pred_loc.shape}\nlabel.shape:\n{pred_label.shape}")
 
 onnx = False
-tensorrt = False
-model_onnx = "ssd2.onnx"
-model_trt = "ssd_engine2.trt"
+tensorrt = True
+model_onnx = "yolov5s6.onnx"
+# model_onnx = "ssd2.onnx"
+model_trt = "ssd_engine.trt"
 # benchmark(model, input_shape=input_shapes, nruns=50)
 # print(model)
 if onnx:
@@ -71,4 +72,4 @@ if onnx:
     torch.onnx.export(model, input, model_onnx)
 
 if tensorrt:
-    call(f"trtexec --onnx={model_onnx} --saveEngine={model_trt} --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --workspace={1 << 30} --verbose".split())
+    call(f"trtexec --onnx={model_onnx} --saveEngine={model_trt} --inputIOFormats=fp16:chw --outputIOFormats=fp16:chw --fp16 --workspace={1 << 30}".split()) # --verbose optional

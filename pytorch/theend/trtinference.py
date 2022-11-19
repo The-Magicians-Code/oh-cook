@@ -1,11 +1,11 @@
 import tensorrt as trt
 import numpy as np
-import os
 import pycuda.driver as cuda
 import pycuda.autoinit
 import torch
 import time
 import cv2
+import os
 
 class HostDeviceMem(object):
     def __init__(self, host_mem, device_mem):
@@ -74,7 +74,7 @@ class TrtModel:
         return [out.host.reshape(batch_size, -1) for out in self.outputs]
 
 # Helper function to benchmark the model
-def benchmark(model, data, nwarmup=100, nruns=1000):
+def benchmark(model, data, nwarmup=100, nruns=1000, batch_size=1):
     with torch.no_grad():
         for i in range(1, nwarmup + 1):
             pred_loc, pred_label = model(data, batch_size)
@@ -92,11 +92,10 @@ def benchmark(model, data, nwarmup=100, nruns=1000):
             #     print('Iteration %d/%d, avg batch time %.2f ms'%(i, 1000, np.mean(timings)*1000))
     print('Iteration %d/%d, avg. batch time %.2f ms, %d FPS' % (i, 1000, np.mean(timings)*1000, 1 / np.mean(timings)))
 
+# def test():
+    # utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
 
-# if __name__ == "__main__":
-utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
-
-trt_engine_path = os.path.join("ssd_engine.trt")
+trt_engine_path = os.path.join("yolov5s6_engine.trt")
 model = TrtModel(trt_engine_path, dtype=np.float16)
 shape = model.engine.get_binding_shape(0)
 # print(shape)
@@ -145,3 +144,5 @@ print(res)
 # plt.savefig(f"results/f{detected}.png")
 
 # # benchmark(model, data)
+
+# test()

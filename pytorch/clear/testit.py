@@ -97,7 +97,7 @@ class TrtModel:
 # cap = cv2.VideoCapture('filesrc location=video.mp4 ! qtdemux ! queue ! h264parse ! omxh264dec ! nvvidconv ! video/x-raw,format=BGRx,width=1280,height=720 ! queue ! videoconvert ! queue ! video/x-raw, format=BGR ! appsink', cv2.CAP_GSTREAMER)
 # print(int(cap.get(cv2.CAP_PROP_FPS)))
 
-trt_engine_path = os.path.join("ssd_engine2.trt")
+trt_engine_path = os.path.join("ssd_engine.trt")
 model = TrtModel(trt_engine_path)
 
 cap = cv2.VideoCapture("video.mp4")
@@ -105,10 +105,12 @@ cap = cv2.VideoCapture("video.mp4")
 def gen_frames():
     # transform = transforms.ToTensor()
     # device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
+    # utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
+    
+    ret, frame = cap.read()
 
-    height, width = 720, 1280# frame.shape[:2]
-
+    height, width = frame.shape[:2]
+    
     fps = 0
     tau = time.time()
     smoothing = 0.9
@@ -149,7 +151,9 @@ def gen_frames():
                 # img = np.transpose(cv2.resize(pic, size), (2, 0, 1))
                 # print(img.shape)
 
-                loc, label = model(img, batch_size)
+                pred = model(img, batch_size)
+                print(pred)
+                # loc, label = model(img, batch_size)
                 # loc = torch.Tensor(loc.reshape((1, 4, 8732)))
                 # label = torch.Tensor(label.reshape((1, 81, 8732)))
 
