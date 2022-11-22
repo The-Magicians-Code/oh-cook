@@ -11,8 +11,8 @@ model = torch.hub.load("ultralytics/yolov5", "custom", "models/yolov5s6.engine")
 in_size = model.model.bindings["images"].shape[-1]  # Retrieve input size of the model
 model.eval().to("cuda")
 
-cap = cv2.VideoCapture('filesrc location=../video.mp4 ! qtdemux ! queue ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw,format=BGRx,width=1280,height=720 ! queue ! videoconvert ! queue ! video/x-raw, format=BGR ! appsink', cv2.CAP_GSTREAMER)
-# cap = cv2.VideoCapture("../video.mp4")
+# cap = cv2.VideoCapture('filesrc location=../video.mp4 ! qtdemux ! queue ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw,format=BGRx,width=1280,height=720 ! queue ! videoconvert ! queue ! video/x-raw, format=BGR ! appsink', cv2.CAP_GSTREAMER)
+cap = cv2.VideoCapture("../video.mp4")
 
 def gen_frames():
     ret, frame = cap.read()
@@ -72,13 +72,13 @@ def gen_frames():
                         text_pos, \
                         cv2.FONT_HERSHEY_SIMPLEX, 1, (100, 255, 0), 2)
             
-            # ret, buffer = cv2.imencode('.jpg', pic)
-            # pic = buffer.tobytes()
+            ret, buffer = cv2.imencode('.jpg', pic)
+            pic = buffer.tobytes()
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-            # yield (b'--frame\r\n'
-            #     b'Content-Type: image/jpeg\r\n\r\n' + pic + b'\r\n')  # concat frame one by one and show result
-            print(f"{fps:.2f}")
+            yield (b'--frame\r\n'
+                b'Content-Type: image/jpeg\r\n\r\n' + pic + b'\r\n')  # concat frame one by one and show result
+            # print(f"{fps:.2f}")
             
 @app.route('/video_feed')
 def video_feed():
@@ -90,7 +90,7 @@ def index():
     """Video streaming home page."""
     return render_template('index.html')
 
-# if __name__ == '__main__':
-#     app.run(host='0.0.0.0', port=3001)
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=3001)
     # app.run(host='0.0.0.0', port=3030) # For Jetson
-gen_frames()
+# gen_frames()
