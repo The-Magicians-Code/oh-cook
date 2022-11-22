@@ -41,7 +41,7 @@ def gen_frames():
                 fps = fps*smoothing + 0.1/(now - tau)
             tau = now
             
-            # pic = cv2.resize(pic, (in_size, in_size))
+            pic = cv2.resize(pic, (in_size, in_size))
             results = model(pic, size=in_size)
             detections = results.pandas().xyxy[0]
 
