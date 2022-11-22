@@ -7,7 +7,7 @@ from flask import Flask, render_template, Response
 app = Flask(__name__)
 
 # model = torch.hub.load('ultralytics/yolov5', 'yolov5s6', pretrained=True)
-model = torch.hub.load("ultralytics/yolov5", "custom", "yolov5s6_engine.engine") # This line is important since it contains RT execution
+model = torch.hub.load("ultralytics/yolov5", "custom", "models/yolov5s6.engine") # This line is important since it contains RT execution
 in_size = model.model.bindings["images"].shape[-1]  # Retrieve input size of the model
 model.eval().to("cuda")
 
@@ -41,7 +41,7 @@ def gen_frames():
                 fps = fps*smoothing + 0.1/(now - tau)
             tau = now
             
-            pic = cv2.resize(pic, (in_size, in_size))
+            # pic = cv2.resize(pic, (in_size, in_size))
             results = model(pic, size=in_size)
             detections = results.pandas().xyxy[0]
 
