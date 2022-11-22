@@ -1,7 +1,7 @@
 FROM nvcr.io/nvidia/pytorch:22.01-py3
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update -y
+# RUN apt-get update -y
 
 # Works, but without Gstreamer
 # RUN apt-get install ffmpeg libsm6 libxext6 -y
@@ -18,7 +18,7 @@ RUN pip install scikit-image pycuda seaborn
 RUN pip uninstall -y opencv-python
 RUN apt-get -y update
 RUN apt-get -y install build-essential
-RUN apt-get -y install pkg-configc
+RUN apt-get -y install pkg-config
 RUN apt-get -y install libgstreamer1.0-0 \
 gstreamer1.0-plugins-base \
 gstreamer1.0-plugins-good \
