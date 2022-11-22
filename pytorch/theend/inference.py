@@ -11,8 +11,8 @@ model = torch.hub.load("ultralytics/yolov5", "custom", "models/yolov5s6.engine")
 in_size = model.model.bindings["images"].shape[-1]  # Retrieve input size of the model
 model.eval().to("cuda")
 
-# cap = cv2.VideoCapture('filesrc location=../video.mp4 ! qtdemux ! queue ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw,format=BGRx,width=1280,height=720 ! queue ! videoconvert ! queue ! video/x-raw, format=BGR ! appsink', cv2.CAP_GSTREAMER)
-cap = cv2.VideoCapture("../video.mp4")
+cap = cv2.VideoCapture('filesrc location=../video.mp4 ! qtdemux ! queue ! h264parse ! nvv4l2decoder ! nvvidconv ! video/x-raw,format=BGRx,width=1280,height=720 ! queue ! videoconvert ! queue ! video/x-raw, format=BGR ! appsink', cv2.CAP_GSTREAMER)
+# cap = cv2.VideoCapture("../video.mp4")
 
 def gen_frames():
     ret, frame = cap.read()
