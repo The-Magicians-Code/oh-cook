@@ -92,10 +92,7 @@ def benchmark(model, data, nwarmup=100, nruns=1000, batch_size=1):
             #     print('Iteration %d/%d, avg batch time %.2f ms'%(i, 1000, np.mean(timings)*1000))
     print('Iteration %d/%d, avg. batch time %.2f ms, %d FPS' % (i, 1000, np.mean(timings)*1000, 1 / np.mean(timings)))
 
-# def test():
-    # utils = torch.hub.load('NVIDIA/DeepLearningExamples:torchhub', 'nvidia_ssd_processing_utils')
-
-trt_engine_path = os.path.join("yolov5s6_engine.trt")
+trt_engine_path = os.path.join("models/yolov5s6.engine")
 model = TrtModel(trt_engine_path, dtype=np.float16)
 shape = model.engine.get_binding_shape(0)
 # print(shape)
@@ -107,42 +104,7 @@ pic = pic[...,::-1]
 size = shape[2:]
 img = cv2.resize(pic, size)
 
-res = model(img, batch_size)
-print(res)
-
-# loc, label = model(img, batch_size)
-# # print(loc.shape, label.shape)
-
-# loc = torch.Tensor(loc.reshape((1, 4, 8732)))
-# label = torch.Tensor(label.reshape((1, 81, 8732)))
-# print(f"loc:\n{loc}\nlabel:\n{label}")
-# print(f"loc.shape:\n{loc.shape}\nlabel.shape:\n{label.shape}")
-# results = utils.decode_results([loc, label])
-# print(results)
-
-# loca, id, conf = results[0]
-
-# from matplotlib import pyplot as plt
-# import matplotlib.patches as patches
-
-# detected = "ship_found"
-# classes_to_labels = utils.get_coco_object_dictionary()
-
-# fig, ax = plt.subplots(1)
-# # Show original, denormalized image...
-# # image = img / 2 + 0.5
-# ax.imshow(img)
-# # ...with detections
-# bboxes, classes, confidences = results[0]
-# for idx in range(len(bboxes)):
-#     left, bot, right, top = bboxes[idx]
-#     x, y, w, h = [val * size[0] for val in [left, bot, right - left, top - bot]]
-#     rect = patches.Rectangle((x, y), w, h, linewidth=1, edgecolor='r', facecolor='none')
-#     ax.add_patch(rect)
-#     ax.text(x, y, "{} {:.0f}%".format(classes_to_labels[classes[idx] - 1], confidences[idx]*100), bbox=dict(facecolor='white', alpha=0.5))
-# # plt.show()
-# plt.savefig(f"results/f{detected}.png")
-
-# # benchmark(model, data)
-
-# test()
+with torch.no_grad():   # Calculating gradients in this stage causes GPU memory leaks
+    res = model(img, batch_size)
+    print(res)
+    print(res[0].shape)

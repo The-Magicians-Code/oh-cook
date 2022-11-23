@@ -8,7 +8,7 @@ import numpy as np
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-#weights=FasterRCNN_MobileNet_V3_Large_FPN_Weights.DEFAULT
+# weights=FasterRCNN_MobileNet_V3_Large_FPN_Weights.DEFAULT
 
 model = torchvision.models.detection.fasterrcnn_mobilenet_v3_large_fpn(
     pretrained=True#weights=weights
@@ -49,10 +49,9 @@ boxes = torch.tensor(np.array(boxes))
 labels = torch.tensor(np.array(labels))
 # print(scores, boxes, labels)
 
-#labels = [weights.meta["categories"][i] for i in labels]# prediction["labels"]]
+# labels = [weights.meta["categories"][i] for i in labels]# prediction["labels"]]
 
-labels_and_scores = [f"Vessel:{score*100:.2f}%" for label, score in zip(labels, scores) 
-                                                                    if label == 9]
+labels_and_scores = [f"{label}:{score*100:.2f}%" for label, score in zip(labels, scores)]
 
 # print(labels_and_scores)
 box = draw_bounding_boxes(img, boxes=boxes,
