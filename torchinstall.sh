@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 wget https://nvidia.box.com/shared/static/ssf2v7pf5i245fk4i0q926hy4imzs2ph.whl -O torch-1.11.0-cp38-cp38-linux_aarch64.whl
 sudo apt-get install python3-pip libopenblas-base libopenmpi-dev libomp-dev -y
 pip3 install Cython
